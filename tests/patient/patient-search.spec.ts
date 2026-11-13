@@ -21,19 +21,20 @@ test.describe('Bahmni Patient Search', () => {
         // Step 2: Open Patient Registration
         await page.locator('#bahmni\\.registration').click();
 
-        // Step 3: Search patient using patient ID
+        // Step 3: Search patient using patient ID.
+        // Bahmni navigates directly to the patient record.
         await searchPatientPage.searchByPatientId(patientId);
 
-        // Step 4: Verify patient appears in search results
-        await searchPatientPage.verifyPatientInResults(patientId);
+        // Step 4: Verify direct navigation to patient record
+        await expect(page).toHaveURL(/#\/patient\/[^/?#]+/);
 
-        // Step 5: Open patient record by clicking the ID
-        await searchPatientPage.openPatientRecord(patientId);
-
-        // Step 6: Verify patient record is displayed
-        await expect(page).toHaveURL(/#\/patient\//);
+        // Step 5: Verify patient identifier on the record
         await expect(
             page.getByText('Patient Identifier:', { exact: false })
+        ).toBeVisible();
+
+        await expect(
+            page.getByText(patientId, { exact: true })
         ).toBeVisible();
     });
 });
